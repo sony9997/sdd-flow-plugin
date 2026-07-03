@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "实现|新增|增加|添加|修改|重构|开发|写一个|做一个|帮我写|帮我改|fix|implement|refactor|build|create|feature",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '<sdd-flow-reminder>若涉及代码改动，先调用 sdd-flow skill 做 S1/S2/S3 分级再按分级路径执行。</sdd-flow-reminder>'"
+          }
+        ]
+      }
+    ]
+  }
+}

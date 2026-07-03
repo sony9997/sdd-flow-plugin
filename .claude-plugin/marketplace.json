@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sdd-flow",
+  "description": "SDD 协同开发编排套件：OpenSpec × Superpowers 自动分级与闭环",
+  "owner": { "name": "sony9997" },
+  "plugins": [
+    {
+      "name": "sdd-flow",
+      "description": "开发请求自动 S1/S2/S3 分级 + 闭环编排 + 避坑守门",
+      "source": "./",
+      "category": "workflows"
+    }
+  ]
+}
