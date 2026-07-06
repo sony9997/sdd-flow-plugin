@@ -27,8 +27,8 @@ metadata:
 
 判定后**自动分支**：
 
-- **S1 → 直接写（全自动，无需确认）**：直接实现 + `superpowers:test-driven-development`；非平凡逻辑留一个 `assert` 自检或小测试；不开 openspec、不跑 brainstorm。
-- **S2 → 半闭环（减速点停）**：`openspec-propose` 出轻量 proposal + specs（design.md 可选）→ `superpowers:writing-plans` 拆几步 → `superpowers:test-driven-development` 执行 → 跑一次 `sdd-gate` 自检三问 → 不必 archive。减速点：proposal、plan 确认。
+- **S1 → 直接写（全自动，仅末尾确认）**：直接实现 + `superpowers:test-driven-development`；非平凡逻辑留一个 `assert` 自检或小测试；不开 openspec、不跑 brainstorm。TDD完成后，主动询问用户是否需要追加端到端(E2E)测试。
+- **S2 → 半闭环（减速点停）**：`openspec-propose` 出轻量 proposal + specs（design.md 可选）→ `superpowers:writing-plans` 拆几步 → `superpowers:test-driven-development` 执行（完成后询问用户是否追加E2E测试） → 跑一次 `sdd-gate` 自检三问 → 不必 archive。减速点：proposal、plan 确认、是否进行E2E测试。
 - **S3 → 全闭环（减速点停）**：走下方「S3 全闭环总览」五阶段。
 
 ## S3 全闭环总览
@@ -55,7 +55,7 @@ metadata:
 2. 调 `superpowers:brainstorming` → 一次一问、给 2-3 个带推荐的方案 → 涉及前端 UI 时生成独立 HTML 原型纳入 changes 目录
 3. 设计批准后调 `superpowers:writing-plans` → 每个 step 是一个 2-5 分钟的动作
 4. 调 `superpowers:subagent-driven-development` 执行：每个 task 内强制 `superpowers:test-driven-development`；task 完成后触发两阶段 Review（先 spec 合规，后 code quality）
-5. 全部通过 + 完整性测试 → 调 `openspec-archive-change` 归档，再 `openspec-sync-specs` 同步规范
+5. 全部通过 + 完整性测试（默认强制进行E2E端到端测试） → 调 `openspec-archive-change` 归档，再 `openspec-sync-specs` 同步规范
 
 ## 强制减速点（不可跳）
 
