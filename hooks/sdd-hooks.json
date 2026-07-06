@@ -2,7 +2,7 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "matcher": "实现|新增|增加|添加|修改|重构|开发|写一个|做一个|帮我写|帮我改|fix|implement|refactor|build|create|feature",
+        "matcher": "实现|新增|增加|添加|修改|修复|删除|移除|重构|开发|写一个|做一个|帮我写|帮我改|fix|implement|refactor|build|create|feature|delete|remove",
         "hooks": [
           {
             "type": "command",

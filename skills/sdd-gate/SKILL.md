@@ -19,6 +19,7 @@ metadata:
 - **症状**：用户说「跳过 brainstorming 直接写」「别问了直接做」
 - **为什么错**：brainstorming 是有意的「减速」。短期省几分钟，返工 + bug 修复时间数倍于节省
 - **守门动作**：暂停，提醒「这是有意减速」，至少做一轮 `superpowers:brainstorming` 再进 plan。若用户坚持，记一句备注后放行，但显式 flag 风险
+- **分级豁免**：此规则仅适用于 S2/S3。S1 级按设计不跑 brainstorm，不视为误区
 
 ## 误区二：混淆 OpenSpec specs 与 Superpowers plans
 
@@ -38,10 +39,13 @@ metadata:
   - 预览：本地直接打开，或用项目现有预览途径（如 `pnpm --filter happy-app web`）
 - **判定**：单页面 / 无复杂交互 → 文字够；多页面 / 复杂状态 → 必须出 HTML 原型
 
-## 自检三问（任一阶段结束前）
+## 自检四问（任一阶段结束前）
 
-1. 我跳过 brainstorm / TDD / review 了吗？（→ 误区一）
+> 注意：执行自检时先确认当前任务的分级（S1/S2/S3），部分检查项仅适用于特定分级。
+
+1. 我跳过 brainstorm / TDD / review 了吗？（→ 误区一，仅 S2/S3）
 2. 我的 plan 在重复 specs 已有的「是什么」吗？（→ 误区二）
 3. 这块 UI 我只用文字描述了吗？（→ 误区三）
+4. 应该跑 E2E 的场景是否已进行/已询问？（S1/S2 应已询问用户，S3 应已强制执行）
 
 全否 → 放行；任一是 → 先修再走。
