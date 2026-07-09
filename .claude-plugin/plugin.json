@@ -1,6 +1,6 @@
 {
   "name": "sdd-flow",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "OpenSpec 管「做什么」，Superpowers 管「怎么做」，本 plugin 串成自动分级闭环",
   "author": { "name": "sony9997" },
   "hooks": "./hooks/sdd-hooks.json"
