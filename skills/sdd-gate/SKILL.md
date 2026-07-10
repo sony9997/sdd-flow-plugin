@@ -4,7 +4,7 @@ description: SDD 协同开发避坑守门员 —— 检查四大误区（绕过 
 license: MIT
 metadata:
   author: my-happy-coder
-  version: "1.2.0"
+  version: "1.3.0"
   source: 据《Claude Code + OpenSpec + Superpowers 协同开发实践指南》提炼
 ---
 
@@ -49,7 +49,7 @@ metadata:
   - S1：主动询问用户是否追加 E2E
 - **判定**：纯工具函数/无外部依赖 → 单元测试够；涉及 API 调用/多页面跳转/外部服务 → 必须跑 E2E
 
-## 自检五问（任一阶段结束前）
+## 自检六问（任一阶段结束前）
 
 > 注意：执行自检时先确认当前任务的分级（S1/S2/S3），部分检查项仅适用于特定分级。
 
@@ -58,5 +58,6 @@ metadata:
 3. 这块 UI 我只用文字描述了吗？（→ 误区三）
 4. 应该跑 E2E 的场景是否已进行/已询问？（→ 误区四，S1/S2 询问，S3 强制）
 5. 实现与 spec 是否一致？（对照 tasks.md / specs 逐项核对）
+6. 进度与经验是否已更新？（S3：tasks.md 已勾选；S2/S3：经验已蒸馏 + CHANGELOG 已追加）
 
 全否 → 放行；任一是 → 先修再走。

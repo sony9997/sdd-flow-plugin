@@ -4,15 +4,29 @@ OpenSpec 管「做什么」，Superpowers 管「怎么做」，本 plugin 把两
 
 ## Skills
 
-- **`sdd-flow`**：主编排。任何开发请求自动触发，Step 0 按四信号（范围/决策/风险/UI）判 S1/S2/S3 → S1 直接写+TDD 全自动；S2 半闭环；S3 全闭环（propose→brainstorm→plan→子代理TDD+两阶段Review→archive）。S2/S3 在减速点停下确认。
-- **`sdd-gate`**：四大误区避坑守门员（绕过 Superpowers / 混淆 specs 与 plans / 全栈 UI 靠纯文字 / 跳过 E2E 只跑单元测试）。
+- **`sdd-flow`**：主编排。任何开发请求自动触发，Step 0 按四信号（范围/决策/风险/UI）判 S1/S2/S3 → S1 直接写+TDD 全自动；S2 半闭环；S3 全闭环（propose→brainstorm→plan→子代理TDD+两阶段Review→archive→经验沉淀）。bug 命中 S2/S3 先跑 RCA。S2/S3 在减速点停下确认。
+- **`sdd-gate`**：四大误区避坑守门员（绕过 Superpowers / 混淆 specs 与 plans / 全栈 UI 靠纯文字 / 跳过 E2E 只跑单元测试）。自检六问，含进度/经验更新检查。
+- **`sdd-progress`**：项目级实时进度生成。纯读取 `openspec changes/specs` + 项目根 `CHANGELOG.md` + `git log`，渲染【进行中｜最近完成｜下一步】。不落盘、零 drift。
 
 ## 依赖（必须先装）
 
 - **OpenSpec**：`openspec-propose` / `openspec-archive`
-- **Superpowers**：`superpowers:brainstorming` / `writing-plans` / `subagent-driven-development` / `test-driven-development` / `executing-plans` / `verification-before-completion`（`dispatching-parallel-agents` 仅调试时按需，非常规依赖）
+- **Superpowers**：`superpowers:brainstorming` / `writing-plans` / `subagent-driven-development` / `test-driven-development` / `systematic-debugging` / `executing-plans` / `verification-before-completion`（`dispatching-parallel-agents` 仅调试时按需，非常规依赖）
+- **claude-mem**（可选）：`claude-mem:save_memory` 存经验，跨项目语义召回。未装则经验降级存项目 `openspec/LESSONS.md`。
 
 本 plugin 只含编排层，不重复实现上述能力。
+
+## 进度与经验机制（v1.3.0+）
+
+三层，职责正交：
+
+| 层 | 载体 | 谁写 | 性质 |
+|---|---|---|---|
+| 需求级进度 | `openspec/changes/<变更名>/tasks.md` | sdd-flow 每 task 完成勾选 | 实时、随变更 |
+| 项目级进度 | `sdd-progress` 实时生成 | 按需读取，不落盘 | 实时、零 drift |
+| 项目历史 | 项目根 `CHANGELOG.md` | sdd-flow 在 S2/S3 完成时追加 | 只增、不可变 |
+
+经验：S2/S3 完成时自动蒸馏（失败记录/review 发现/brainstorm 取舍），存 claude-mem（跨项目召回）或降级 LESSONS.md。S1 不蒸馏。
 
 ## 安装
 
