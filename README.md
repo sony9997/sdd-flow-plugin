@@ -10,7 +10,7 @@ OpenSpec 管「做什么」，Superpowers 管「怎么做」，本 plugin 把两
 ## 依赖（必须先装）
 
 - **OpenSpec**：`openspec-propose` / `openspec-archive`
-- **Superpowers**：`superpowers:brainstorming` / `writing-plans` / `subagent-driven-development` / `test-driven-development` / `dispatching-parallel-agents` / `executing-plans` / `verification-before-completion`
+- **Superpowers**：`superpowers:brainstorming` / `writing-plans` / `subagent-driven-development` / `test-driven-development` / `executing-plans` / `verification-before-completion`（`dispatching-parallel-agents` 仅调试时按需，非常规依赖）
 
 本 plugin 只含编排层，不重复实现上述能力。
 
@@ -51,10 +51,13 @@ OpenSpec 管「做什么」，Superpowers 管「怎么做」，本 plugin 把两
 
 ## 排查
 
+提醒注入（`<sdd-flow-reminder>`）只取决于 matcher 是否命中，与依赖装没装无关。依赖缺失不会影响注入，只会让后续 skill 调用失败。
+
 | 症状 | 原因 | 解决 |
 |---|---|---|
-| 输入开发动词无提醒注入 | OpenSpec/Superpowers 未安装 | `/plugin install openspec` + `/plugin install superpowers` |
+| 输入开发动词无提醒注入 | plugin 未加载，或 matcher 未命中该词 | `/reload-plugins`；确认动词在 matcher 列表内 |
 | sdd-flow skill 调用报 skill not found | plugin 未正确加载 | `/plugin update sdd-flow` 或重装 |
+| skill 调用报依赖 skill 不存在（如 openspec/superpowers not found） | OpenSpec / Superpowers 未安装 | 按各自官方方式安装（marketplace 名以官方为准） |
 | 提醒误触发（改 README 也注入） | matcher 过宽 | 收窄 `hooks/sdd-hooks.json` matcher |
 
 ## 卸载
