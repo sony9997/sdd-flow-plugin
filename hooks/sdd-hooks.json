@@ -2,11 +2,22 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "matcher": "实现|新增|修复|删除|重构|开发|fix|implement|refactor|delete|remove",
+        "matcher": "实现|新增|增加|添加|修复|删除|重构|开发|修改|改动|调整|优化|完善|升级|更新|生成|搭建|创建|支持|做个|做一下|加个|加上|改下|改一下|写个|写一下|弄|搞|build|add|create|update|change|modify|enhance|improve|support|fix|implement|refactor|delete|remove|bug|feat",
         "hooks": [
           {
             "type": "command",
-            "command": "printf '<sdd-flow-reminder>若涉及代码改动，先调用 sdd-flow skill 做 S1/S2/S3 分级再按分级路径执行。</sdd-flow-reminder>'"
+            "command": "printf '<sdd-flow-reminder>MUST：本请求疑似开发类（代码/功能/bug 变更）。禁止直接写码。第一步 invoke sdd-flow skill 做 S1/S2/S3 分级，判级须显式输出「S1|S2|S3 + 一句理由」，再按分级路径执行（S1 直接写+TDD，S2 openspec-propose，S3 全闭环）。非开发类请求忽略。</sdd-flow-reminder>'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '<sdd-flow-enforce>写码动作前自检：本会话已 invoke sdd-flow 并输出 S1/S2/S3 分级？未分级则停下先 invoke sdd-flow。S1 可继续写，S2/S3 须按路径走（proposal/brainstorm/plan）。已分级则忽略。</sdd-flow-enforce>'"
           }
         ]
       }
