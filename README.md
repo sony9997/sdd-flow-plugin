@@ -37,9 +37,9 @@ OpenSpec 管「做什么」，Superpowers 管「怎么做」，本 plugin 把两
 
 ## 在 OpenCode 中安装
 
-[OpenCode](https://opencode.ai) 原生兼容 Claude 的 `SKILL.md` 格式（扫描 `~/.claude/skills/`、`.claude/skills/`、`.opencode/skills/`），三个 skill 内容零改动即可被发现。
+[OpenCode](https://opencode.ai) 原生兼容 Claude 的 `SKILL.md` 格式（全局扫描 `~/.config/opencode/skills/`、`~/.claude/skills/`、`~/.agents/skills/`，项目级扫 `.opencode/skills/` 等），三个 skill 内容零改动即可被发现。
 
-一键安装（拷到 `~/.claude/skills/`，OpenCode 与 Claude Code 用户级双兼容）：
+一键安装（拷到 `~/.config/opencode/skills/`，OpenCode 原生全局目录）：
 
 ```bash
 git clone https://github.com/sony9997/sdd-flow-plugin.git

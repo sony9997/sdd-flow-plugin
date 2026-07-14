@@ -1,7 +1,7 @@
 #!/bin/sh
 # Verify sdd-flow skills are installed and OpenCode-discoverable at DEST.
 set -u
-DEST="${SDD_INSTALL_DIR:-$HOME/.claude/skills}"
+DEST="${SDD_INSTALL_DIR:-$HOME/.config/opencode/skills}"
 rc=0
 for s in sdd-flow sdd-gate sdd-progress; do
   f="$DEST/$s/SKILL.md"

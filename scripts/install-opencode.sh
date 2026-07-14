@@ -5,7 +5,7 @@ set -eu
 HERE=$(cd "$(dirname "$0")" && pwd)
 ROOT=$(cd "$HERE/.." && pwd)
 SRC="${SDD_SOURCE_DIR:-$ROOT/skills}"
-DEST="${SDD_INSTALL_DIR:-$HOME/.claude/skills}"
+DEST="${SDD_INSTALL_DIR:-$HOME/.config/opencode/skills}"
 
 [ -d "$SRC" ] || { echo "ERROR: source skills dir not found: $SRC" >&2; exit 1; }
 mkdir -p "$DEST"

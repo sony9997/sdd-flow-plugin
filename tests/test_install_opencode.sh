@@ -26,4 +26,10 @@ SDD_SOURCE_DIR="$TMP/badsrc" SDD_INSTALL_DIR="$TMP/baddest" \
 [ -d "$TMP/baddest/wrong" ] && fail "mismatched skill should not be copied"
 [ -d "$TMP/baddest/badname" ] && fail "mismatched skill dir should not be created"
 
+# scenario 4: default DEST is OpenCode-native ~/.config/opencode/skills
+FAKEHOME="$TMP/fakehome"
+mkdir -p "$FAKEHOME"
+env -u SDD_INSTALL_DIR HOME="$FAKEHOME" sh "$ROOT/scripts/install-opencode.sh" >/dev/null 2>&1 || fail "default-path install failed"
+[ -f "$FAKEHOME/.config/opencode/skills/sdd-flow/SKILL.md" ] || fail "default DEST must be ~/.config/opencode/skills (OpenCode native)"
+
 echo "test_install_opencode PASS"
