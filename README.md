@@ -35,6 +35,35 @@ OpenSpec 管「做什么」，Superpowers 管「怎么做」，本 plugin 把两
 /plugin install sdd-flow@sdd-flow
 ```
 
+## 在 OpenCode 中安装
+
+[OpenCode](https://opencode.ai) 原生兼容 Claude 的 `SKILL.md` 格式（扫描 `~/.claude/skills/`、`.claude/skills/`、`.opencode/skills/`），三个 skill 内容零改动即可被发现。
+
+一键安装（拷到 `~/.claude/skills/`，OpenCode 与 Claude Code 用户级双兼容）：
+
+```bash
+git clone https://github.com/sony9997/sdd-flow-plugin.git
+cd sdd-flow-plugin
+./scripts/install-opencode.sh
+./scripts/verify-opencode.sh   # 自检三 skill 落位 + name 匹配
+```
+
+自定义目标（如项目级 `.opencode/skills/`）：
+
+```bash
+SDD_INSTALL_DIR=./.opencode/skills ./scripts/install-opencode.sh
+```
+
+重启 OpenCode 或开新会话后，sdd-flow/sdd-gate/sdd-progress 出现在 skill 工具列表。
+
+### 软闸门（替代 Claude hook）
+
+OpenCode 无声明式 hook。把 `docs/opencode-rules.md` 的片段粘进项目 `AGENTS.md`，复刻分级软闸门（软提醒，靠模型自觉，可靠性 ~85%，低于 Claude 侧硬 matcher 的 ~98%）。
+
+### 前置依赖
+
+同 Claude 侧：OpenSpec（`openspec-propose`/`openspec-archive`）、Superpowers（`brainstorming`/`writing-plans`/`test-driven-development` 等）需按各自官方方式安装到 OpenCode。本套件只含编排层。
+
 ## 升级
 
 若已安装旧版本，可通过以下方式升级：
