@@ -31,6 +31,11 @@ metadata:
 
 **bug 根因路由（分级前判）**：请求含「修复/fix/bug」且判定为 S2/S3 时，**写码前先跑 `superpowers:systematic-debugging`** 找根因，RCA 结果融入 design/plan 再进流程。直接 TDD 会测症状不测根因。S1 bug 不跑 RCA（小且明确，直接修 + TDD）。
 
+**S2/S3 分支与工作区检查**（分级后、分支路由前执行，S1 豁免）：
+- 执行 `git branch --show-current`，若为 `main` 或 `master`，提醒「⚠️ 当前在主干分支。S2/S3 变更请先 `git switch -c feat/<任务名>` 开新分支」
+- 执行 `git status --porcelain`，有输出则提醒「⚠️ working tree 不干净，有未提交改动。建议先 `git stash` 或 commit 清理后再开始新变更」
+- 两项检查通过后方可进入后续 S2/S3 流程
+
 判定后**自动分支**：
 
 - **S1 → 直接写 + 可选 E2E**：直接实现 + `superpowers:test-driven-development`（S1 bug 直接修，不跑 RCA）；非平凡逻辑留一个 `assert` 自检或小测试；不开 openspec、不跑 brainstorm、不跑 sdd-gate（S1 全自动，自检关卡在此为冗余）。TDD 完成后，主动询问用户是否需要追加端到端(E2E)测试。
@@ -61,7 +66,7 @@ metadata:
 2. 调 `superpowers:brainstorming` → 一次一问、给 2-3 个带推荐的方案 → 涉及前端 UI 时生成独立 HTML 原型纳入 changes 目录
 3. 设计批准后调 `superpowers:writing-plans` → 每个 step 是一个 2-5 分钟的动作
 4. 调 `superpowers:subagent-driven-development` 执行：每个 task 内强制 `superpowers:test-driven-development`；**每个 task 完成（GREEN + review 过）即勾选 `openspec/changes/<变更名>/tasks.md` 对应项**（需求级进度实时同步，中断后可从此接续）；task 完成后触发两阶段 Review（先 spec 合规，后 code quality）。若执行中暴露多个**独立**故障（不同子系统/不同根因），可临时叠加 `superpowers:dispatching-parallel-agents` 并行排查（调试用，非常规执行手段）
-5. 全部通过 + `superpowers:verification-before-completion` 最终验证 + 完整性测试（默认强制进行E2E端到端测试） → 调 `openspec-archive` 归档 → **经验沉淀**（见下方「进度与经验沉淀」）
+5. 全部通过 + `superpowers:verification-before-completion` 最终验证 + 完整性测试（默认强制进行E2E端到端测试） → **archive 前确认 `git status --porcelain` clean 或改动已全部 commit** → 调 `openspec-archive` 归档 → **经验沉淀**（见下方「进度与经验沉淀」）
 
 ## 强制减速点（不可跳）
 
