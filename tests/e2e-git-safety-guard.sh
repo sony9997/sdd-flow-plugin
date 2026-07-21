@@ -29,17 +29,17 @@ test_guard() {
   fi
 }
 
-test_guard "block 'git merge main'"         1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge main"}}'
-test_guard "block 'git merge master'"       1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge master"}}'
-test_guard "block 'git merge origin/main'"  1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge origin/main"}}'
-test_guard "block 'git merge origin/master'" 1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge origin/master"}}'
-test_guard "block 'rtk git merge main'"     1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git merge main"}}'
+test_guard "block 'git merge main'"         2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge main"}}'
+test_guard "block 'git merge master'"       2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge master"}}'
+test_guard "block 'git merge origin/main'"  2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge origin/main"}}'
+test_guard "block 'git merge origin/master'" 2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge origin/master"}}'
+test_guard "block 'rtk git merge main'"     2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git merge main"}}'
 test_guard "allow 'git merge feature/bar'"  0 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge feature/bar"}}'
 test_guard "allow 'git merge develop'"      0 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git merge develop"}}'
-test_guard "block 'git push'"               1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push"}}'
-test_guard "block 'git push origin main'"   1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push origin main"}}'
-test_guard "block 'rtk git push'"           1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git push"}}'
-test_guard "block 'rtk git push --force'"   1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git push --force"}}'
+test_guard "block 'git push'"               2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push"}}'
+test_guard "block 'git push origin main'"   2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git push origin main"}}'
+test_guard "block 'rtk git push'"           2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git push"}}'
+test_guard "block 'rtk git push --force'"   2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git push --force"}}'
 test_guard "hint 'git commit -m fix' (exit 0)" 0 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git commit -m fix: bug"}}'
 test_guard "hint 'rtk git commit' (exit 0)" 0 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"rtk git commit -m feat: thing"}}'
 test_guard "passthrough 'ls'"               0 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"ls -la"}}'
@@ -130,10 +130,10 @@ print(d['hooks']['Stop'][0]['hooks'][0]['command'])
 
 # Simulate dirty state: create temp file then run command
 tmpfile=$(mktemp)
-eval "$STOP_CMD" 2>&1 | grep -q "sdd-flow-stop-warn" && log_pass "dirty tree detected" || log_fail "dirty tree not detected"
+eval "$STOP_CMD" 2>&1 | grep -q "additionalContext" && log_pass "dirty tree detected" || log_fail "dirty tree not detected"
 rm "$tmpfile"
 
-# Simulate the UserPromptSubmit branch check
+# Simulate the UserPromptSubmit branch check (reads prompt from stdin JSON)
 UPS_CMD=$(python3 -c "
 import json
 d=json.load(open('$HOOK_DIR/sdd-hooks.json'))
@@ -142,10 +142,10 @@ print(d['hooks']['UserPromptSubmit'][0]['hooks'][1]['command'])
 
 current_branch=$(git branch --show-current)
 if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
-  eval "$UPS_CMD" 2>&1 | grep -q "sdd-flow-git-warn" && log_pass "main branch warning triggered" || log_fail "main branch warning not triggered"
+  echo '{"prompt":"帮我实现一个功能"}' | bash -c "$UPS_CMD" 2>&1 | grep -q "sdd-flow-git-warn" && log_pass "main branch warning triggered" || log_fail "main branch warning not triggered"
 else
   # On non-main branch, verify the command DOESN'T trigger a false positive
-  output=$(eval "$UPS_CMD" 2>&1) || true
+  output=$(echo '{"prompt":"帮我实现一个功能"}' | bash -c "$UPS_CMD" 2>&1) || true
   if [ -z "$output" ]; then
     log_pass "no false warning on non-main branch ($current_branch)"
   else
@@ -158,8 +158,8 @@ echo ""
 # ── Edge case: command with leading whitespace ──
 echo "## Edge cases"
 
-test_guard "leading whitespace '  git push'" 1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"  git push"}}'
-test_guard "leading spaces '   git merge main'" 1 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"   git merge main"}}'
+test_guard "leading whitespace '  git push'" 2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"  git push"}}'
+test_guard "leading spaces '   git merge main'" 2 '{"hook_type":"PreToolUse","tool_name":"Bash","tool_input":{"command":"   git merge main"}}'
 # ponytail: tab prefix edge case skipped — Claude Code never sends tab prefixes in JSON
 
 echo ""
