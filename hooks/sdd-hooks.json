@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then printf '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"有未提交的改动。建议 git add + git commit 或 git stash 保存。\"}}'; fi"
+            "command": "INPUT=$(cat); echo \"$INPUT\" | grep -qE '\"stop_hook_active\"[[:space:]]*:[[:space:]]*true' && exit 0; branch=$(git branch --show-current 2>/dev/null); if { [ \"$branch\" = main ] || [ \"$branch\" = master ]; } && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then printf '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"⚠️ %s 分支有未提交改动。建议 git switch -c feat/&lt;任务名&gt; 移到开发分支再提交，避免污染主干。\"}}' \"$branch\"; fi"
           }
         ]
       }

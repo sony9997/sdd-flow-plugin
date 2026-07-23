@@ -128,10 +128,45 @@ d=json.load(open('$HOOK_DIR/sdd-hooks.json'))
 print(d['hooks']['Stop'][0]['hooks'][0]['command'])
 ")
 
-# Simulate dirty state: create temp file then run command
-tmpfile=$(mktemp)
-eval "$STOP_CMD" 2>&1 | grep -q "additionalContext" && log_pass "dirty tree detected" || log_fail "dirty tree not detected"
-rm "$tmpfile"
+# Helper: run STOP_CMD in subshell with given stdin JSON (exit inside cmd must not kill test harness)
+run_stop() { echo "$1" | bash -c "$STOP_CMD" 2>&1; }
+
+# Case 1: stop_hook_active=true → silent (kills the 9x block loop)
+out=$(run_stop '{"hook_event_name":"Stop","stop_hook_active":true}')
+if [ -z "$out" ]; then
+  log_pass "stop_hook_active=true silent (kills loop)"
+else
+  log_fail "stop_hook_active=true must be silent (got: ${out:0:80})"
+fi
+
+# Case 2: non-main branch + dirty → silent (dev branch passthrough, user's intent)
+current=$(git branch --show-current)
+out=$(run_stop '{"hook_event_name":"Stop","stop_hook_active":false}')
+if [ -z "$out" ]; then
+  log_pass "non-main branch ($current) passthrough despite dirty tree"
+else
+  log_fail "non-main branch should pass through (got: ${out:0:80})"
+fi
+
+# Case 3: main branch + dirty → warn (protect main from pollution)
+tmprepo=$(mktemp -d)
+git init -q -b main "$tmprepo" 2>/dev/null || { git init -q "$tmprepo"; git -C "$tmprepo" symbolic-ref HEAD refs/heads/main; }
+git -C "$tmprepo" config user.email t@t; git -C "$tmprepo" config user.name t
+touch "$tmprepo/dirty.txt"
+out=$(cd "$tmprepo" && run_stop '{"hook_event_name":"Stop","stop_hook_active":false}')
+echo "$out" | grep -q "additionalContext" && log_pass "main+dirty triggers warn" || log_fail "main+dirty should warn (got: ${out:0:80})"
+rm -rf "$tmprepo"
+
+# Case 4: main branch + clean → silent (no false alarm on clean main)
+tmprepo2=$(mktemp -d)
+git init -q -b main "$tmprepo2" 2>/dev/null || { git init -q "$tmprepo2"; git -C "$tmprepo2" symbolic-ref HEAD refs/heads/main; }
+out=$(cd "$tmprepo2" && run_stop '{"hook_event_name":"Stop","stop_hook_active":false}')
+if [ -z "$out" ]; then
+  log_pass "main+clean silent (no false alarm)"
+else
+  log_fail "main+clean should be silent (got: ${out:0:80})"
+fi
+rm -rf "$tmprepo2"
 
 # Simulate the UserPromptSubmit branch check (reads prompt from stdin JSON)
 UPS_CMD=$(python3 -c "
